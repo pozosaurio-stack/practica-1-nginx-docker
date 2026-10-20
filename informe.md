@@ -78,196 +78,90 @@ El registro contiene las salidas de `docker version`, `/etc/os-release` y `nginx
 
 ## 7. Procedimiento
 
-Se trabajó desde la terminal de Ubuntu. Primero se crearon los dos contenedores; después se copiaron, editaron y devolvieron sus archivos HTML. La edición se hizo con Vi en modo Ex. También se indica cómo abrir los archivos con Nano para repetir el ejercicio.
+La práctica se realizó desde la terminal de Ubuntu. Primero se crearon los dos contenedores, luego se cambió el contenido de sus páginas y al final se revisó el resultado en el navegador.
 
-### Paso 1. Preparar el directorio de trabajo en Linux
+### Paso 1. Preparar el trabajo
 
-Se trabajó en Ubuntu/WSL2 dentro de una carpeta de práctica y se comprobó la disponibilidad de Docker, Vi y los puertos. Para repetir la preparación, situarse en la carpeta descargada de estos materiales, que contiene `index1.html` e `index2.html`. La variable `out` conserva su ubicación y la subcarpeta `ejecucion` separa las copias de trabajo:
-
-La ejecución registrada utilizó una sesión con permisos de administrador y un directorio de práctica dentro de `~/snap/docker/common/`. En una instalación de Docker mediante Snap, esta ubicación permite que los materiales sean accesibles. Si la cuenta no tiene acceso al servicio de Docker, anteponer `sudo` a sus comandos.
+Se utilizó una carpeta para guardar los archivos de la práctica. Antes de crear los servidores, se comprobó que Docker estuviera funcionando:
 
 ```bash
-out="$(pwd)"
-mkdir -p ejecucion/evidencias
-cd ejecucion
-pwd
 docker version
-docker info
-docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
 ```
 
-Docker mostró información tanto del cliente como del servidor. La consulta de puertos no mostró servicios escuchando en 8089 ni 8090. Al repetir el ejercicio, si aparecen contenedores previos llamados `nginx1` o `nginx2`, revisarlos antes de continuar; no eliminarlos automáticamente. Comprobar los puertos con:
+### Paso 2. Crear los dos contenedores
 
-```bash
-ss -ltn '( sport = :8089 or sport = :8090 )'
-```
-
-### Paso 2. Crear el primer contenedor
-
-Se creó el primer contenedor con el comando:
+Se creó el primer contenedor con el nombre `nginx1` y el puerto 8089:
 
 ```bash
 docker run -d --name nginx1 -p 8089:80 nginx
 ```
 
-`--name` asigna el nombre `nginx1`, `-d` lo deja en segundo plano y `-p` publica el servicio en el puerto 8089.
-
-### Paso 3. Crear el segundo contenedor
+Después se creó `nginx2` con el puerto 8090:
 
 ```bash
 docker run -d --name nginx2 -p 8090:80 nginx
-docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
-docker exec nginx1 nginx -v
-docker exec nginx2 nginx -v
 ```
 
-Comprobar que ambos aparecen activos y que sus puertos publicados corresponden a los indicados. Los comandos usan la etiqueta implícita `latest`; anotar la versión efectiva mostrada por Nginx para identificar el entorno utilizado.
+Los dos utilizaron la misma imagen de Nginx. Se asignó un puerto diferente a cada uno para poder abrir sus páginas por separado.
 
-### Paso 4. Copiar y editar el archivo del primer contenedor
+### Paso 3. Copiar la página del primer contenedor
+
+Se copió el archivo `index.html` de `nginx1` a la carpeta de trabajo. La copia se llamó `index1.html` para identificarla:
 
 ```bash
 docker cp nginx1:/usr/share/nginx/html/index.html ./index1.html
-cp index1.html index1-original.html
-vi -n -es -c '%delete _' -c "0read $out/index1.html" -c wq index1.html
-cmp index1.html "$out/index1.html"
 ```
 
-Con Vi se sustituyó la página de bienvenida por el contenido institucional. La variable `$out`, definida en el paso 1, señala la carpeta de los HTML incluidos en el repositorio. `cmp` comprobó que la copia editada coincidiera con el archivo previsto.
+### Paso 4. Personalizar la página institucional
 
-Como alternativa de reproducción manual, abrir `nano index1.html` y editar el contenido. Puede utilizarse la siguiente estructura mínima; el archivo `index1.html` incluido con los materiales ofrece la presentación completa utilizada.
+Se editó `index1.html` con Vi, un editor de texto que funciona en la terminal. Se reemplazó la página de bienvenida de Nginx por el nombre del Instituto Técnico Superior Sudamericano y una descripción de la práctica. El contenido completo está en [index1.html](index1.html).
 
-```html
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Información institucional</title>
-</head>
-<body>
-  <h1>Información institucional</h1>
-  <h2>Instituto Técnico Superior Sudamericano</h2>
-  <p>Práctica 1: creación de servidores web con Nginx y Docker.</p>
-  <p>Servidor: nginx1. Puerto del anfitrión: 8089.</p>
-</body>
-</html>
-```
+Durante la edición se borró por error la última línea del archivo. Al revisar la copia se detectó el problema y se corrigió antes de enviarla al contenedor.
 
-Si se elige la alternativa con Nano, guardar con `Ctrl+O`, confirmar el nombre con `Enter` y salir con `Ctrl+X`. Revisar el contenido y permitir su lectura:
-
-```bash
-cat index1.html
-chmod 644 index1.html
-```
-
-### Paso 5. Devolver el archivo al primer contenedor
+Una vez guardados los cambios, se devolvió el archivo a `nginx1`:
 
 ```bash
 docker cp index1.html nginx1:/usr/share/nginx/html/index.html
-docker exec nginx1 cat /usr/share/nginx/html/index.html
 ```
 
-La ruta de destino termina en `index.html`, aunque la copia local se llame `index1.html`. Se modifica el contenido del sitio, no la configuración de Nginx. La sustitución de una página estática normalmente se observa al actualizar el navegador.
+Dentro del contenedor se mantuvo el nombre `index.html`, que corresponde a la página inicial de Nginx.
 
-### Paso 6. Copiar y editar el archivo del segundo contenedor
+### Paso 5. Copiar la página del segundo contenedor
+
+Se repitió el proceso con `nginx2`. Esta vez la copia se guardó como `index2.html`:
 
 ```bash
 docker cp nginx2:/usr/share/nginx/html/index.html ./index2.html
-cp index2.html index2-original.html
-vi -n -es -c '%delete _' -c "0read $out/index2.html" -c wq index2.html
-cmp index2.html "$out/index2.html"
 ```
 
-Se repitió el método con Vi y se comprobó la coincidencia con el HTML personal preparado. Para reproducir la edición manualmente puede utilizarse `nano index2.html`. La estructura mínima del contenido es:
+### Paso 6. Personalizar la página del estudiante
 
-```html
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Información personal</title>
-</head>
-<body>
-  <h1>Información personal</h1>
-  <p>Estudiante: Pedro Pozo.</p>
-  <p>Institución: Instituto Técnico Superior Sudamericano.</p>
-  <p>Ciclo: cuarto.</p>
-  <p>Servidor: nginx2. Puerto del anfitrión: 8090.</p>
-</body>
-</html>
-```
+Se editó el segundo archivo con Vi para colocar los datos de Pedro Pozo, el nombre del instituto y el cuarto ciclo. El resultado está en [index2.html](index2.html).
 
-En la alternativa con Nano, guardar con `Ctrl+O`, confirmar con `Enter` y salir con `Ctrl+X`. Si se utiliza el HTML incluido con los materiales, conservar estos datos y el texto distintivo «Información personal».
-
-```bash
-cat index2.html
-chmod 644 index2.html
-```
-
-### Paso 7. Devolver el archivo al segundo contenedor
+Después de guardar y revisar el contenido, se copió el archivo al segundo contenedor:
 
 ```bash
 docker cp index2.html nginx2:/usr/share/nginx/html/index.html
-docker exec nginx2 cat /usr/share/nginx/html/index.html
 ```
 
-Comprobar que el destino pertenece a `nginx2`. Las dos rutas interiores son iguales, pero cada contenedor mantiene su propio archivo.
+### Paso 7. Comprobar las dos páginas
 
-### Paso 8. Verificar el estado, la respuesta HTTP y el contenido
+Se revisó con `docker ps` que los dos contenedores estuvieran activos. Luego se abrió cada dirección en el navegador:
 
-```bash
-docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
-docker port nginx1
-docker port nginx2
-curl --retry 5 --retry-connrefused --max-time 15 --fail --silent --show-error -D evidencias/cabeceras-nginx1.txt -o evidencias/respuesta-nginx1.html -w 'nginx1 HTTP %{http_code}\n' http://localhost:8089/
-curl --retry 5 --retry-connrefused --max-time 15 --fail --silent --show-error -D evidencias/cabeceras-nginx2.txt -o evidencias/respuesta-nginx2.html -w 'nginx2 HTTP %{http_code}\n' http://localhost:8090/
-grep -F 'Información institucional' evidencias/respuesta-nginx1.html
-grep -F 'Instituto Técnico Superior Sudamericano' evidencias/respuesta-nginx1.html
-grep -F 'Información personal' evidencias/respuesta-nginx2.html
-grep -F 'Pedro Pozo' evidencias/respuesta-nginx2.html
-cmp index1.html evidencias/respuesta-nginx1.html && echo 'nginx1: contenido servido idéntico al archivo local'
-cmp index2.html evidencias/respuesta-nginx2.html && echo 'nginx2: contenido servido idéntico al archivo local'
-sha256sum index1.html index2.html evidencias/respuesta-nginx1.html evidencias/respuesta-nginx2.html
-```
+- [http://localhost:8089](http://localhost:8089/): mostró la información del instituto.
+- [http://localhost:8090](http://localhost:8090/): mostró la información de Pedro Pozo.
 
-Se obtuvo **HTTP 200 en ambos puertos**, se encontraron los textos previstos y `cmp` confirmó que cada respuesta coincidía con su archivo local. Los hashes SHA-256 también coincidieron para cada pareja de archivos. Las salidas completas figuran en el registro de ejecución. Si al repetir aparece una diferencia, debe corregirse antes de dar por terminada la verificación.
+También se comprobó desde la terminal que ambas páginas respondieran correctamente. Las dos devolvieron el código HTTP 200 y su contenido coincidió con los archivos guardados en la computadora.
 
-Abrir en el navegador:
+### Paso 8. Guardar las evidencias y publicar el informe
 
-- [Servidor institucional: localhost:8089](http://localhost:8089/).
-- [Servidor personal: localhost:8090](http://localhost:8090/).
+Se guardaron capturas de las dos páginas y las copias de los archivos HTML. Las capturas aparecen en la sección de resultados. Los comandos y las comprobaciones se pueden consultar en el [registro de ejecución](evidencias/registro-ejecucion.txt), dentro de la carpeta [evidencias](evidencias/).
 
-Si Docker está en una máquina remota, utilizar su dirección en lugar de `localhost`. En WSL, comprobar primero desde la terminal Linux y después desde el navegador de Windows; registrar cualquier diferencia.
-
-### Paso 9. Conservar las evidencias reales
-
-Se guardaron los siguientes archivos en `evidencias/`:
-
-| Evidencia | Contenido |
-| --- | --- |
-| [Registro de ejecución](evidencias/registro-ejecucion.txt) | Comandos, versiones, descarga, estado de contenedores, incidencia, corrección y verificaciones; rutas locales abreviadas |
-| [Cabeceras de nginx1](evidencias/cabeceras-nginx1.txt) y [cabeceras de nginx2](evidencias/cabeceras-nginx2.txt) | Respuestas HTTP 200 y datos del servidor |
-| [Respuesta de nginx1](evidencias/respuesta-nginx1.html) y [respuesta de nginx2](evidencias/respuesta-nginx2.html) | Cuerpos HTML recuperados por HTTP |
-| [Original de nginx1](evidencias/index1-original.html) y [original de nginx2](evidencias/index2-original.html) | Copias de las páginas predeterminadas antes de personalizarlas |
-| [Captura institucional](evidencias/04-institucional.png) y [captura personal](evidencias/05-personal.png) | Páginas reales abiertas en el navegador; se muestran en la sección 8 |
-| [Registro de capturas](evidencias/capturas-navegador.txt) | Direcciones consultadas para obtener las capturas |
-
-Las capturas muestran las páginas abiertas en `http://localhost:8089/` y `http://localhost:8090/`. Las direcciones consultadas constan en el registro de capturas.
-
-### Paso 10. Corregir el error de edición
-
-En el primer intento con Vi se eliminó por error la última línea del HTML. `cmp` detectó que la copia ya no coincidía con el archivo preparado. Se quitó la instrucción `$delete _`, se repitió la edición y se volvió a comparar. Después de corregirlo, se copió el archivo al contenedor. El error y su corrección aparecen en el registro de ejecución.
-
-Las copias locales se conservaron para poder repetir el ejercicio. Si se elimina un contenedor, los cambios de sus archivos que no estén guardados fuera de él también se pierden. ([Docker, s. f.-c](https://docs.docker.com/engine/containers/run/))
-
-### Paso 11. Publicar el informe y preparar la entrega
-
-El informe reúne los datos del estudiante, las páginas y las evidencias. Los materiales se organizan en el repositorio independiente `practica-1-nginx-docker`, con `informe.md`, `README.md`, `index1.html` e `index2.html` en la raíz y las carpetas `images/`, `evidencias/` y `audio/` para los recursos correspondientes.
+Finalmente, se organizó el informe en Markdown y se subió a GitHub junto con las páginas y las imágenes.
 
 **Enlace de entrega:** [Informe de la Práctica 1 en GitHub](https://github.com/pozosaurio-stack/practica-1-nginx-docker/blob/main/informe.md).
 
-Grabar con la voz del estudiante una reflexión de 60 segundos, utilizando [el guion de apoyo](audio/guion-audio.md) solo después de ajustarlo a lo aprendido. Guardarla como MP3 y comprobar su duración. El guion no reemplaza el archivo de audio.
+El audio con la reflexión del estudiante se entrega por separado en formato MP3. La consigna pide una duración de 60 segundos.
 
 ## 8. Resultados esperados:
 
@@ -278,8 +172,8 @@ Grabar con la voz del estudiante una reflexión de 60 segundos, utilizando [el g
 | Segundo servicio | Puerto 8090, HTTP 200, información de Pedro Pozo | HTTP 200; se verificaron «Información personal» y «Pedro Pozo» |
 | Copias de archivos | Ambos HTML servidos coinciden con las copias locales | `cmp` sin diferencias y hashes SHA-256 iguales en cada pareja |
 | Capturas | Evidencia real, con títulos y ancho máximo de 800 px | Dos capturas de las páginas servidas por HTTP, incluidas abajo |
-| Informe Markdown | Documento con evidencias y fuentes | Informe, páginas, registros e imágenes organizados en el repositorio `practica-1-nginx-docker`; enlace de entrega en el paso 11 |
-| Reflexión oral | MP3 con voz del estudiante y duración de 60 segundos | Pendiente de grabación |
+| Informe Markdown | Documento con evidencias y fuentes | Informe, páginas, registros e imágenes organizados en el repositorio `practica-1-nginx-docker`; enlace de entrega en el paso 8 |
+| Reflexión oral | MP3 con voz del estudiante y duración de 60 segundos | Grabación preparada por el estudiante para adjuntarla a la entrega |
 
 <img src="evidencias/04-institucional.png" alt="Captura real del navegador con la página institucional servida por nginx1 en el puerto 8089" width="800">
 
