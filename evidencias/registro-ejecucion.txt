@@ -1,0 +1,159 @@
+Rutas locales abreviadas; comandos y resultados conservados.
+$MATERIALES: carpeta de los documentos HTML y evidencias.
+$TRABAJO: carpeta de trabajo en Linux.
+$SCRIPTS: carpeta de scripts de la práctica.
+
++ cd $TRABAJO
++ timeout 180 bash -c 'until /snap/bin/docker info >/dev/null 2>&1; do sleep 2; done'
++ date -Is
+2026-10-19T21:07:17-05:00
++ date +%s
++ cat /etc/os-release
+PRETTY_NAME="Ubuntu 24.04.4 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.4 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
++ docker version
+Client:
+ Version:           29.8.0
+ API version:       1.56
+ Go version:        go1.26.8
+ Git commit:        88096ef
+ Built:             Wed Sep 23 15:26:13 2026
+ OS/Arch:           linux/amd64
+ Context:           default
+
+Server:
+ Engine:
+  Version:          29.8.0
+  API version:      1.56 (minimum version 1.40)
+  Go version:       go1.26.8
+  Git commit:       3ce5872
+  Built:            Wed Sep 23 15:26:53 2026
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          v2.3.4
+  GitCommit:        db8809540e1a7a9da5d518876894933ff55692ab
+ runc:
+  Version:          1.5.1
+  GitCommit:        
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
++ command -v vi
+/usr/bin/vi
++ for name in nginx1 nginx2
++ docker inspect nginx1
++ for name in nginx1 nginx2
++ docker inspect nginx2
++ ss -ltn '( sport = :8089 or sport = :8090 )'
+State Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
++ docker run -d --name nginx1 -p 8089:80 nginx
+Unable to find image 'nginx:latest' locally
+latest: Pulling from library/nginx
+6a6757ab48b1: Pulling fs layer
+ecc510c1e359: Pulling fs layer
+188e9077f350: Pulling fs layer
+113d9139ada2: Pulling fs layer
+b19352c60515: Pulling fs layer
+792a76c59dbd: Pulling fs layer
+c9ec797c69ed: Pulling fs layer
+3a5a894bf2b2: Download complete
+6a6757ab48b1: Download complete
+188e9077f350: Download complete
+b19352c60515: Download complete
+2b7d75aa4652: Download complete
+792a76c59dbd: Download complete
+c9ec797c69ed: Download complete
+ecc510c1e359: Download complete
+113d9139ada2: Download complete
+ecc510c1e359: Pull complete
+113d9139ada2: Pull complete
+b19352c60515: Pull complete
+188e9077f350: Pull complete
+792a76c59dbd: Pull complete
+c9ec797c69ed: Pull complete
+6a6757ab48b1: Pull complete
+Digest: sha256:bc4cad49969aaf95eb4eecec5572846f86e59f1e8332aba36ed64b91aff8b724
+Status: Downloaded newer image for nginx:latest
+fe538c61252eba80d88f4c27a2e9b061c6cc779aa9ef41084f2304c749856025
++ docker run -d --name nginx2 -p 8090:80 nginx
+54dbb2e8da9ba5a7ebe582fe46f9dac2c253ecf9d80de767a8c0e772e234b149
++ docker cp nginx1:/usr/share/nginx/html/index.html ./index1.html
++ cp index1.html index1-original.html
++ vi -n -es -c '%delete _' -c '0read $MATERIALES/index1.html' -c '$delete _' -c wq index1.html
++ cmp index1.html $MATERIALES/index1.html
+cmp: EOF on index1.html after byte 3666, line 58
++ cd $TRABAJO
++ date -Is
+2026-10-19T21:09:08-05:00
++ echo 'Correccion: conservar la ultima linea HTML en la edicion con Vi.'
+Correccion: conservar la ultima linea HTML en la edicion con Vi.
++ source /dev/fd/63
+++ sed -n '/^docker cp nginx1:/,$p' $SCRIPTS/run_practice.sh
+++ docker cp nginx1:/usr/share/nginx/html/index.html ./index1.html
+++ cp index1.html index1-original.html
+++ vi -n -es -c '%delete _' -c '0read $MATERIALES/index1.html' -c wq index1.html
+++ cmp index1.html $MATERIALES/index1.html
+++ chmod 644 index1.html
+++ docker cp index1.html nginx1:/usr/share/nginx/html/index.html
+++ docker cp nginx2:/usr/share/nginx/html/index.html ./index2.html
+++ cp index2.html index2-original.html
+++ vi -n -es -c '%delete _' -c '0read $MATERIALES/index2.html' -c wq index2.html
+++ cmp index2.html $MATERIALES/index2.html
+++ chmod 644 index2.html
+++ docker cp index2.html nginx2:/usr/share/nginx/html/index.html
+++ docker ps --filter 'name=^nginx[12]$' --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+NAMES     STATUS              PORTS
+nginx2    Up 59 seconds       0.0.0.0:8090->80/tcp, [::]:8090->80/tcp
+nginx1    Up About a minute   0.0.0.0:8089->80/tcp, [::]:8089->80/tcp
+++ docker exec nginx1 nginx -v
+nginx version: nginx/1.31.7
+++ docker exec nginx2 nginx -v
+nginx version: nginx/1.31.7
+++ docker image inspect nginx --format '{{.Id}} {{join .RepoDigests " "}}'
+sha256:bc4cad49969aaf95eb4eecec5572846f86e59f1e8332aba36ed64b91aff8b724 nginx@sha256:bc4cad49969aaf95eb4eecec5572846f86e59f1e8332aba36ed64b91aff8b724
+++ docker port nginx1
+80/tcp -> 0.0.0.0:8089
+80/tcp -> [::]:8089
+++ docker port nginx2
+80/tcp -> 0.0.0.0:8090
+80/tcp -> [::]:8090
+++ curl --retry 5 --retry-connrefused --max-time 15 --fail --silent --show-error -D $MATERIALES/evidencias/cabeceras-nginx1.txt -o $MATERIALES/evidencias/respuesta-nginx1.html -w 'nginx1 HTTP %{http_code}\n' http://localhost:8089/
+nginx1 HTTP 200
+++ curl --retry 5 --retry-connrefused --max-time 15 --fail --silent --show-error -D $MATERIALES/evidencias/cabeceras-nginx2.txt -o $MATERIALES/evidencias/respuesta-nginx2.html -w 'nginx2 HTTP %{http_code}\n' http://localhost:8090/
+nginx2 HTTP 200
+++ grep -F 'Información institucional' $MATERIALES/evidencias/respuesta-nginx1.html
+    <div class="eyebrow">Práctica 01 · Información institucional</div>
+++ grep -F 'Instituto Técnico Superior Sudamericano' $MATERIALES/evidencias/respuesta-nginx1.html
+  <title>Instituto Técnico Superior Sudamericano | Servidor institucional</title>
+  <header><div class="wrap brand">Instituto Técnico Superior Sudamericano</div></header>
+          <dt>Nombre de la institución</dt><dd>Instituto Técnico Superior Sudamericano</dd>
+++ grep -F 'Información personal' $MATERIALES/evidencias/respuesta-nginx2.html
+    <div class="eyebrow">Práctica 01 · Información personal</div>
+++ grep -F 'Pedro Pozo' $MATERIALES/evidencias/respuesta-nginx2.html
+  <title>Pedro Pozo | Página personal</title>
+    <h1>Pedro Pozo</h1>
+++ cmp index1.html $MATERIALES/evidencias/respuesta-nginx1.html
+++ cmp index2.html $MATERIALES/evidencias/respuesta-nginx2.html
+++ sha256sum index1.html index2.html $MATERIALES/evidencias/respuesta-nginx1.html $MATERIALES/evidencias/respuesta-nginx2.html
+5d63718030031de9a1af8b033351d14b4dff390ebd4df3c1528f5a9dbcd0bbd4  index1.html
+bc2b18167a50149dee079a08f033704c64620ccccdc705ed4c8097ef4aba5ae1  index2.html
+5d63718030031de9a1af8b033351d14b4dff390ebd4df3c1528f5a9dbcd0bbd4  $MATERIALES/evidencias/respuesta-nginx1.html
+bc2b18167a50149dee079a08f033704c64620ccccdc705ed4c8097ef4aba5ae1  $MATERIALES/evidencias/respuesta-nginx2.html
+++ cp index1-original.html index2-original.html $MATERIALES/evidencias/
+++ date -Is
+2026-10-19T21:09:32-05:00
+++ date +%s
+++ echo EJECUCION_VERIFICADA
+EJECUCION_VERIFICADA

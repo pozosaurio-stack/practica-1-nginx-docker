@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Página institucional de la práctica de Nginx con Docker.">
+  <title>Instituto Técnico Superior Sudamericano | Servidor institucional</title>
+  <style>
+    :root { color-scheme: light; --ink:#132b42; --muted:#536577; --accent:#07685d; --paper:#f2f6f8; --line:#d9e3e8; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:var(--paper); line-height:1.65; }
+    a { color:var(--accent); }
+    .wrap { width:min(100% - 40px,1000px); margin:auto; }
+    header { background:var(--ink); color:white; padding:24px 0; }
+    .brand { font-size:1rem; font-weight:700; letter-spacing:.04em; }
+    .eyebrow { font-size:.78rem; font-weight:750; letter-spacing:.13em; text-transform:uppercase; color:var(--accent); }
+    main { padding:64px 0 48px; }
+    h1 { margin:12px 0 16px; font-size:clamp(2.3rem,6vw,4.2rem); line-height:1.1; letter-spacing:-.04em; overflow-wrap:anywhere; }
+    .lead { max-width:680px; font-size:1.15rem; color:var(--muted); }
+    .grid { display:grid; grid-template-columns:1.25fr 1fr; gap:24px; margin-top:36px; }
+    .card { padding:28px; border:1px solid var(--line); border-radius:16px; background:white; }
+    h2 { font-size:1.2rem; line-height:1.35; margin:0 0 18px; }
+    p { margin:0 0 16px; }
+    p:last-child { margin-bottom:0; }
+    dl { margin:0; }
+    dt { font-size:.82rem; font-weight:700; color:var(--muted); }
+    dd { margin:2px 0 18px; font-weight:600; overflow-wrap:anywhere; }
+    dd:last-child { margin-bottom:0; }
+    .note { margin-top:24px; border-left:4px solid var(--accent); padding:15px 20px; background:#e4f1ed; border-radius:0 8px 8px 0; }
+    footer { border-top:1px solid var(--line); padding:22px 0 28px; color:var(--muted); font-size:.88rem; }
+    code { padding:2px 6px; background:#e5edf2; border-radius:4px; color:var(--ink); }
+    @media(max-width:680px) { main { padding-top:38px; } .grid { grid-template-columns:1fr; } .card { padding:22px; } }
+  </style>
+</head>
+<body>
+  <header><div class="wrap brand">Instituto Técnico Superior Sudamericano</div></header>
+  <main class="wrap">
+    <div class="eyebrow">Práctica 01 · Información institucional</div>
+    <h1>Aprender, crear<br>y compartir.</h1>
+    <p class="lead">Página de presentación institucional preparada para la práctica de despliegue y personalización de un servidor web Nginx con Docker.</p>
+    <div class="grid">
+      <section class="card" aria-labelledby="datos">
+        <h2 id="datos">Nuestra institución</h2>
+        <dl>
+          <dt>Nombre de la institución</dt><dd>Instituto Técnico Superior Sudamericano</dd>
+          <dt>Ciclo académico</dt><dd>Cuarto ciclo</dd>
+        </dl>
+      </section>
+      <section class="card" aria-labelledby="practica">
+        <h2 id="practica">El propósito de esta página</h2>
+        <p>Aplicar la creación y manipulación de archivos HTML y publicar el resultado en un contenedor independiente.</p>
+        <p>Esta página presenta los datos institucionales correspondientes a la actividad académica de cuarto ciclo.</p>
+      </section>
+    </div>
+    <aside class="note"><strong>Contenido personalizado:</strong> este documento corresponde al archivo <code>index.html</code> servido por el primer contenedor.</aside>
+  </main>
+  <footer><div class="wrap">Entorno de práctica · Contenedor <code>nginx1</code> · Puerto del anfitrión <code>8089</code> → puerto del contenedor <code>80</code></div></footer>
+</body>
+</html>

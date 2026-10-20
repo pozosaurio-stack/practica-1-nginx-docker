@@ -1,0 +1,5 @@
+Capturas reales del navegador web sobre servicios HTTP de Docker.
+Institucional: http://localhost:8089/
+Personal: http://localhost:8090/
+Fecha UTC: 2026-10-20T02:10:01.791Z
+Las capturas muestran el contenido completo de cada página; las direcciones constan en este registro.
