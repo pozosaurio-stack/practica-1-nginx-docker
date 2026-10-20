@@ -1,8 +1,5 @@
 # Práctica 1: dos servidores web con Nginx y Docker
 
-> **Dos servidores Nginx personalizados y verificados en Linux.**
-> Ambos servidores respondieron HTTP 200 y entregaron sus archivos personalizados. El [registro de ejecución](evidencias/registro-ejecucion.txt) y las capturas documentan los resultados. La reflexión de 60 segundos con la voz del estudiante está pendiente de grabación en MP3.
-
 **Estudiante:** Pedro Pozo  
 **Institución:** Instituto Técnico Superior Sudamericano  
 **Ciclo:** Cuarto  
@@ -17,7 +14,7 @@ Creación y personalización de dos servidores web Nginx mediante contenedores D
 
 **Duración registrada de la ejecución técnica: 2,25 minutos (135 segundos).**
 
-Este intervalo comprende la comprobación del entorno, descarga de la imagen, creación de contenedores, edición de archivos con Vi en modo Ex, corrección de una incidencia y verificación por HTTP. Excluye la preparación previa de materiales, las capturas posteriores del navegador, la redacción del informe, la publicación y la grabación del audio. La duración total de la actividad académica no se cronometró.
+El registro mide desde la revisión de Docker hasta la última comprobación HTTP. Incluye la descarga de la imagen y la corrección de un error de edición. La preparación, las capturas, la redacción y el audio quedan fuera de este intervalo; su tiempo no se registró.
 
 | Registro | Valor |
 | --- | --- |
@@ -27,25 +24,25 @@ Este intervalo comprende la comprobación del entorno, descarga de la imagen, cr
 
 ## 3. Fundamentos:
 
-Un servidor web atiende solicitudes de un navegador y devuelve recursos como documentos HTML. En esta práctica, Nginx entrega una página estática: el contenido depende del archivo guardado y no requiere una aplicación que consulte una base de datos. La guía oficial distingue el servicio de archivos estáticos de otras funciones, como actuar de intermediario entre clientes y aplicaciones. Aquí se estudia únicamente la primera función. ([NGINX, s. f.](https://nginx.org/en/docs/beginners_guide.html))
+Un servidor web recibe una solicitud del navegador y responde con el contenido de una página. En esta práctica se utilizó Nginx para mostrar documentos HTML. Son páginas estáticas porque su contenido está guardado en un archivo y no depende de una base de datos. Al visitar la dirección del servidor, el navegador recibe ese archivo y muestra los títulos, párrafos y demás elementos que contiene. ([NGINX, s. f.](https://nginx.org/en/docs/beginners_guide.html))
 
-Docker permite iniciar procesos dentro de contenedores con un entorno separado. Una imagen proporciona los archivos y valores iniciales; un contenedor es una instancia creada a partir de ella. Por eso, `nginx1` y `nginx2` pueden partir de la misma imagen y mostrar páginas diferentes. El nombre facilita dirigir comandos a la instancia correcta. La opción `-d` deja el proceso funcionando en segundo plano mientras la terminal queda disponible para otras tareas. ([Docker, s. f.-c](https://docs.docker.com/engine/containers/run/))
+Docker permite ejecutar programas en contenedores. Una imagen contiene los archivos que sirven como base para crearlos; el contenedor es la instancia que se pone en funcionamiento. En este caso se utilizó la misma imagen de Nginx para crear dos contenedores, llamados `nginx1` y `nginx2`. Aunque parten de la misma imagen, cada uno tiene sus propios archivos y puede mostrar una página distinta. La opción `-d` permite dejarlos funcionando en segundo plano. ([Docker, s. f.-c](https://docs.docker.com/engine/containers/run/))
 
-La comunicación requiere distinguir dos puertos. Dentro de cada contenedor, Nginx escucha en el puerto 80. En el anfitrión se utilizan 8089 y 8090 para identificar las dos páginas sin ocupar dos veces el mismo puerto. Docker interpreta la opción `-p` en el orden anfitrión:contenedor. Así, una visita a `localhost:8089` llega a `nginx1`. `localhost` siempre representa el equipo desde el que se realiza la consulta; una máquina virtual o un servidor remoto puede exigir otra dirección. ([Docker, s. f.-b](https://docs.docker.com/get-started/docker-concepts/running-containers/publishing-ports/))
+Para acceder a las páginas es necesario publicar los puertos. Nginx escucha en el puerto 80 dentro de cada contenedor. En la computadora se asignó el puerto 8089 al primero y el 8090 al segundo. Por eso, `8089:80` significa que las solicitudes recibidas en el puerto 8089 se dirigen al puerto 80 de `nginx1`. Usar puertos distintos en el anfitrión permite consultar ambos servidores al mismo tiempo. ([Docker, s. f.-b](https://docs.docker.com/get-started/docker-concepts/running-containers/publishing-ports/))
 
-HTML organiza el contenido mediante elementos como encabezados, párrafos y listas. El documento `index.html` suele representar la página inicial. Una declaración de codificación UTF-8 permite mostrar correctamente los acentos, y el atributo `lang` identifica el idioma. El contenido institucional puede presentar el nombre del instituto y la carrera; el personal puede identificar al estudiante y su curso. Estas páginas deben incluir datos confirmados, evitando completar información desconocida con nombres inventados. ([MDN Web Docs, s. f.](https://developer.mozilla.org/es/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax))
+El archivo `index.html` contiene la página inicial del servidor. HTML organiza la información mediante etiquetas: por ejemplo, `h1` sirve para un título y `p` para un párrafo. La codificación UTF-8 permite mostrar correctamente las tildes. En el primer documento se colocó el nombre del instituto y en el segundo, el nombre del estudiante y su ciclo. Los estilos CSS incluidos en cada archivo dan formato a esos datos. ([MDN Web Docs, s. f.](https://developer.mozilla.org/es/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax))
 
-El intercambio de archivos se realiza con `docker cp`. Primero se obtiene una copia del documento original, luego se modifica en el anfitrión y finalmente se devuelve al mismo destino dentro del contenedor. Los nombres `index1.html` e `index2.html` permiten separar las copias locales, aunque ambas se publican como `index.html`. Una ruta relativa depende del directorio de trabajo, por lo que conviene revisar la ubicación antes de cada operación. Nano permite editar y guardar el texto desde la terminal. ([Docker, s. f.-a](https://docs.docker.com/reference/cli/docker/container/cp/); [GNU nano, s. f.](https://www.nano-editor.org/dist/latest/nano.html))
+El comando `docker cp` permite copiar archivos entre la computadora y un contenedor. El proceso consiste en sacar el archivo original, editarlo y devolverlo a la misma ruta. Las copias locales se llamaron `index1.html` e `index2.html` para distinguirlas, pero dentro de cada contenedor conservaron el nombre `index.html`. Antes de copiar hay que revisar la carpeta de trabajo y el nombre del contenedor para no modificar el servidor equivocado. ([Docker, s. f.-a](https://docs.docker.com/reference/cli/docker/container/cp/))
 
-La verificación debe unir funcionamiento y contenido. Una página visible no demuestra por sí sola que pertenezca al contenedor esperado. Por eso se revisan nombres, puertos, respuesta HTTP y textos distintivos, además de comparar el archivo servido con su copia local. Las capturas documentan únicamente resultados obtenidos. Los diagramas siguientes explican la arquitectura y el recorrido del archivo; no sustituyen esas evidencias. Conservar los HTML fuera de los contenedores también facilita repetir el ejercicio y publicar sus materiales.
+La comprobación se realizó desde la terminal y el navegador. `docker ps` permitió revisar el estado de los contenedores y `curl` obtuvo las páginas por HTTP. La respuesta 200 indicó que la solicitud se atendió correctamente. También se revisaron los textos y se compararon las respuestas con los archivos locales. Así se comprobó que cada puerto mostraba la página correspondiente.
 
 <img src="images/arquitectura.png" alt="Diagrama del navegador, los puertos 8089 y 8090 y los dos contenedores Nginx" width="800">
 
-*Figura 1. Arquitectura de los dos servidores. Diagrama explicativo, no captura de ejecución.*
+*Figura 1. Esquema de los dos contenedores y sus puertos.*
 
 <img src="images/flujo-archivos.png" alt="Diagrama de copia del archivo desde cada contenedor, edición local y devolución como index.html" width="800">
 
-*Figura 2. Flujo de copia, edición y devolución de los archivos. Diagrama explicativo, no evidencia de ejecución.*
+*Figura 2. Copia, edición y devolución del archivo HTML.*
 
 ## 4. Conocimientos previos.
 
@@ -91,11 +88,11 @@ El registro contiene las salidas de `docker version`, `/etc/os-release` y `nginx
 - [Imagen oficial de Nginx](https://hub.docker.com/_/nginx).
 - [Guía introductoria de Nginx](https://nginx.org/en/docs/beginners_guide.html).
 - [Manual de Nano](https://www.nano-editor.org/dist/latest/nano.html).
-- [Video guía indicado por el docente](https://drive.google.com/file/d/1UTxRWaQPCHITq7u5l0mXEmRk49m__tlf/view). Recurso proporcionado en la consigna; su contenido no se utiliza como evidencia de ejecución.
+- [Video guía indicado por el docente](https://drive.google.com/file/d/1UTxRWaQPCHITq7u5l0mXEmRk49m__tlf/view). Recurso indicado en la consigna.
 
 ## 8. Procedimiento
 
-La práctica se ejecutó mediante comandos de terminal y Vi en modo Ex. El registro documenta la creación de ambos contenedores, la copia, edición y devolución de sus archivos, y las comprobaciones HTTP y de contenido. A continuación se describe el método utilizado y se incluyen alternativas de edición manual.
+Se trabajó desde la terminal de Ubuntu. Primero se crearon los dos contenedores; después se copiaron, editaron y devolvieron sus archivos HTML. La edición se hizo con Vi en modo Ex. También se indica cómo abrir los archivos con Nano para repetir el ejercicio.
 
 ### Paso 1. Preparar el directorio de trabajo en Linux
 
@@ -122,13 +119,13 @@ ss -ltn '( sport = :8089 or sport = :8090 )'
 
 ### Paso 2. Crear el primer contenedor
 
-Ejecutar el comando solicitado:
+Se creó el primer contenedor con el comando:
 
 ```bash
 docker run -d --name nginx1 -p 8089:80 nginx
 ```
 
-`--name` asigna el nombre, `-d` permite continuar utilizando la terminal y `-p` publica el puerto del servicio. Guardar la salida real del comando.
+`--name` asigna el nombre `nginx1`, `-d` lo deja en segundo plano y `-p` publica el servicio en el puerto 8089.
 
 ### Paso 3. Crear el segundo contenedor
 
@@ -150,7 +147,7 @@ vi -n -es -c '%delete _' -c "0read $out/index1.html" -c wq index1.html
 cmp index1.html "$out/index1.html"
 ```
 
-Se utilizó **Vi en modo Ex** para reemplazar el documento de bienvenida por el HTML institucional preparado. En este comando, `$out` representa el directorio de los materiales preparados, distinto del directorio de trabajo. En las instrucciones de reproducción, esta variable queda definida en el paso 1. `cmp` comprobó que el archivo editado coincidía con el documento previsto antes de devolverlo al contenedor.
+Con Vi se sustituyó la página de bienvenida por el contenido institucional. La variable `$out`, definida en el paso 1, señala la carpeta de los HTML incluidos en el repositorio. `cmp` comprobó que la copia editada coincidiera con el archivo previsto.
 
 Como alternativa de reproducción manual, abrir `nano index1.html` y editar el contenido. Puede utilizarse la siguiente estructura mínima; el archivo `index1.html` incluido con los materiales ofrece la presentación completa utilizada.
 
@@ -271,26 +268,13 @@ Se guardaron los siguientes archivos en `evidencias/`:
 | [Captura institucional](evidencias/04-institucional.png) y [captura personal](evidencias/05-personal.png) | Páginas reales abiertas en el navegador; se muestran en la sección 9 |
 | [Registro de capturas](evidencias/capturas-navegador.txt) | Direcciones consultadas y fecha de obtención de las capturas |
 
-Las capturas corresponden a las direcciones HTTP de los servidores, no a una vista local de los archivos. Su registro se generó el 19 de octubre de 2026 a las 21:10:01 (UTC−05:00), después del intervalo técnico cronometrado. Las imágenes del contenido tienen sus direcciones documentadas en el archivo de registro. Los diagramas de fundamentos cumplen una función explicativa diferente.
+Las capturas muestran las páginas abiertas en `http://localhost:8089/` y `http://localhost:8090/`. Se guardaron a las 21:10:01 del 19 de octubre de 2026, después de las pruebas de terminal. Las direcciones y la hora constan en el registro de capturas.
 
-### Paso 10. Resolver incidencias, si aparecen
+### Paso 10. Corregir el error de edición
 
-**Incidencia observada:** el primer intento de edición con Vi incluyó la instrucción `$delete _`, que eliminó la última línea del HTML. `cmp` detectó la diferencia antes de devolver el archivo al contenedor. A las 21:09:08 se registró la corrección: conservar la última línea, repetir la edición sin esa instrucción y volver a comparar. Después de que la comparación no mostró diferencias, se realizó la copia al contenedor. Esta comprobación evitó publicar una versión incompleta del documento.
+En el primer intento con Vi se eliminó por error la última línea del HTML. `cmp` detectó que la copia ya no coincidía con el archivo preparado. Se quitó la instrucción `$delete _`, se repitió la edición y se volvió a comparar. Después de corregirlo, se copió el archivo al contenedor. El error y su corrección aparecen en el registro de ejecución.
 
-Para repetir la práctica, se incluye esta guía de diagnóstico:
-
-| Situación | Comprobación y corrección |
-| --- | --- |
-| No se puede conectar con Docker | Revisar `docker info`; iniciar el servicio disponible en el entorno antes de repetir la creación. |
-| El nombre ya existe | Consultar `docker ps -a` y `docker inspect nginx1` o `nginx2`; identificar el contenedor y decidir si corresponde reutilizarlo. |
-| Puerto ocupado | Revisar `ss -ltn`; identificar el servicio que utiliza 8089 o 8090 antes de cambiar nada. |
-| La copia local no existe | Revisar `pwd` y `ls -l index1.html index2.html`; ejecutar desde la carpeta correcta. |
-| HTTP 403 | Verificar lectura del archivo con `docker exec nginx1 ls -l /usr/share/nginx/html/index.html`; corregir permisos del archivo propio y copiarlo de nuevo. |
-| HTTP 404 o contenido equivocado | Revisar el contenedor, la URL y el destino exacto `/usr/share/nginx/html/index.html`. |
-| Continúa la página anterior | Recargar sin caché y comprobar con `curl` qué contenido entrega realmente el servidor. |
-| El contenedor se detiene | Consultar `docker logs nginx1` o `docker logs nginx2` y registrar el error. |
-
-No se necesita eliminar los contenedores para comprobar el ejercicio. Las modificaciones realizadas dentro de ellos se pierden si se eliminan; conservar los HTML locales permite recuperarlas. ([Docker, s. f.-c](https://docs.docker.com/engine/containers/run/))
+Las copias locales se conservaron para poder repetir el ejercicio. Si se elimina un contenedor, los cambios de sus archivos que no estén guardados fuera de él también se pierden. ([Docker, s. f.-c](https://docs.docker.com/engine/containers/run/))
 
 ### Paso 11. Publicar el informe y preparar la entrega
 
@@ -320,7 +304,7 @@ Grabar con la voz del estudiante una reflexión de 60 segundos, utilizando [el g
 
 *Figura 4. Página personal de Pedro Pozo servida por nginx2. Dirección consultada: [localhost:8090](http://localhost:8090/).*
 
-**Conclusión técnica:** se implementaron dos contenedores independientes a partir de la misma imagen y se personalizó su contenido mediante la copia, edición y devolución de archivos. La combinación de puertos distintos permitió acceder a cada página sin confundir sus destinos. Las respuestas HTTP 200, la búsqueda de textos y las comparaciones de archivos confirmaron que cada servidor entregó el documento previsto. La incidencia de la última línea eliminada mostró la utilidad de comprobar los archivos antes de publicarlos: el error se detectó, se corrigió y se repitió la validación. Conservar las copias locales y el registro de comandos permite reproducir el procedimiento y revisar los resultados.
+**Conclusión:** los dos servidores funcionaron con la misma imagen de Nginx y mostraron contenidos distintos. El puerto 8089 presentó la información del instituto y el 8090, los datos de Pedro Pozo. La práctica permitió comprobar cómo se copia y modifica una página dentro de un contenedor. El error de edición también mostró la importancia de revisar el archivo antes de devolverlo al servidor. Las dos respuestas HTTP fueron 200 y coincidieron con los HTML guardados en la computadora.
 
 ## 10. Bibliografía
 
