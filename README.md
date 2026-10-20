@@ -15,7 +15,7 @@ Los archivos locales tienen nombres diferentes para distinguirlos. Dentro de cad
 
 ## Contenido de la entrega
 
-- [Informe de la práctica](informe.md), organizado según los diez apartados de la plantilla docente.
+- [Informe de la práctica](informe.md), con fundamentos, procedimiento, resultados y bibliografía.
 - [Página institucional](index1.html) y [página personal](index2.html).
 - Diagramas explicativos en [images/](images/) y registros de comprobación en [evidencias/](evidencias/).
 - [Guion de apoyo para el audio](audio/guion-audio.md), que Pedro debe adaptar a su experiencia y grabar con su propia voz.
@@ -24,7 +24,7 @@ Los archivos locales tienen nombres diferentes para distinguirlos. Dentro de cad
 
 ## Consulta y reproducción
 
-Seguir los pasos de [la sección 8 del informe](informe.md#8-procedimiento) desde una terminal Linux con Docker disponible. Las direcciones del ejercicio son [localhost:8089](http://localhost:8089/) y [localhost:8090](http://localhost:8090/). Solo responden cuando los contenedores están funcionando en el equipo correspondiente; no son enlaces de alojamiento público.
+Seguir los pasos de [la sección 7 del informe](informe.md#7-procedimiento) desde una terminal Linux con Docker disponible. Las direcciones del ejercicio son [localhost:8089](http://localhost:8089/) y [localhost:8090](http://localhost:8090/). Solo responden cuando los contenedores están funcionando en el equipo correspondiente; no son enlaces de alojamiento público.
 
 Para consultar nuevamente los contenedores ya creados, abrir Ubuntu/WSL, esperar a que `sudo docker info` responda y ejecutar:
 

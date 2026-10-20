@@ -2,27 +2,13 @@
 
 **Estudiante:** Pedro Pozo  
 **Institución:** Instituto Técnico Superior Sudamericano  
-**Ciclo:** Cuarto  
-**Fecha de elaboración:** 19 de octubre de 2026  
-**Fecha de ejecución:** 19 de octubre de 2026.
+**Ciclo:** Cuarto
 
 ## 1. Título
 
 Creación y personalización de dos servidores web Nginx mediante contenedores Docker y manipulación de archivos en Linux.
 
-## 2. Tiempo de duración
-
-**Duración registrada de la ejecución técnica: 2,25 minutos (135 segundos).**
-
-El registro mide desde la revisión de Docker hasta la última comprobación HTTP. Incluye la descarga de la imagen y la corrección de un error de edición. La preparación, las capturas, la redacción y el audio quedan fuera de este intervalo; su tiempo no se registró.
-
-| Registro | Valor |
-| --- | --- |
-| Inicio registrado de la ejecución | 19 de octubre de 2026, 21:07:17 (UTC−05:00) |
-| Fin registrado de la ejecución técnica | 19 de octubre de 2026, 21:09:32 (UTC−05:00) |
-| Duración del intervalo técnico | 2,25 minutos |
-
-## 3. Fundamentos:
+## 2. Fundamentos:
 
 Un servidor web recibe una solicitud del navegador y responde con el contenido de una página. En esta práctica se utilizó Nginx para mostrar documentos HTML. Son páginas estáticas porque su contenido está guardado en un archivo y no depende de una base de datos. Al visitar la dirección del servidor, el navegador recibe ese archivo y muestra los títulos, párrafos y demás elementos que contiene. ([NGINX, s. f.](https://nginx.org/en/docs/beginners_guide.html))
 
@@ -44,7 +30,7 @@ La comprobación se realizó desde la terminal y el navegador. `docker ps` permi
 
 *Figura 2. Copia, edición y devolución del archivo HTML.*
 
-## 4. Conocimientos previos.
+## 3. Conocimientos previos.
 
 - Uso de una terminal Linux y comandos como `pwd`, `mkdir`, `cd`, `ls` y `cat`.
 - Diferencia entre rutas absolutas y relativas.
@@ -53,7 +39,7 @@ La comprobación se realizó desde la terminal y el navegador. `docker ps` permi
 - Diferencia entre imagen, contenedor, anfitrión y puerto.
 - Uso del navegador, captura de pantalla y manejo básico de GitHub.
 
-## 5. Objetivos a alcanzar
+## 4. Objetivos a alcanzar
 
 - Crear dos contenedores llamados `nginx1` y `nginx2` a partir de la imagen `nginx`.
 - Publicar sus servicios en los puertos 8089 y 8090 del anfitrión.
@@ -62,7 +48,7 @@ La comprobación se realizó desde la terminal y el navegador. `docker ps` permi
 - Verificar el servicio HTTP y la correspondencia entre cada puerto y su contenido.
 - Documentar la práctica en Markdown y compartir el informe mediante GitHub.
 
-## 6. Equipo necesario:
+## 5. Equipo necesario:
 
 | Recurso | Entorno verificado o recurso para la entrega |
 | --- | --- |
@@ -78,7 +64,7 @@ La comprobación se realizó desde la terminal y el navegador. `docker ps` permi
 
 El registro contiene las salidas de `docker version`, `/etc/os-release` y `nginx -v` en ambos contenedores. La imagen descargada tiene el identificador `sha256:bc4cad49969aaf95eb4eecec5572846f86e59f1e8332aba36ed64b91aff8b724`. Los comandos de la sección siguiente se ejecutan dentro de Linux, aunque el navegador se abra desde Windows.
 
-## 7. Material de apoyo.
+## 6. Material de apoyo.
 
 - Consigna de la Práctica 1 proporcionada por la asignatura.
 - [Plantilla del informe](https://github.com/maguaman2/informe-tendencias/blob/main/informe.md).
@@ -90,7 +76,7 @@ El registro contiene las salidas de `docker version`, `/etc/os-release` y `nginx
 - [Manual de Nano](https://www.nano-editor.org/dist/latest/nano.html).
 - [Video guía indicado por el docente](https://drive.google.com/file/d/1UTxRWaQPCHITq7u5l0mXEmRk49m__tlf/view). Recurso indicado en la consigna.
 
-## 8. Procedimiento
+## 7. Procedimiento
 
 Se trabajó desde la terminal de Ubuntu. Primero se crearon los dos contenedores; después se copiaron, editaron y devolvieron sus archivos HTML. La edición se hizo con Vi en modo Ex. También se indica cómo abrir los archivos con Nano para repetir el ejercicio.
 
@@ -105,13 +91,12 @@ out="$(pwd)"
 mkdir -p ejecucion/evidencias
 cd ejecucion
 pwd
-date -Iseconds
 docker version
 docker info
 docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
 ```
 
-El inicio registrado fue a las 21:07:17 y Docker mostró información tanto del cliente como del servidor. La consulta de puertos no mostró servicios escuchando en 8089 ni 8090. Al repetir el ejercicio, si aparecen contenedores previos llamados `nginx1` o `nginx2`, revisarlos antes de continuar; no eliminarlos automáticamente. Comprobar los puertos con:
+Docker mostró información tanto del cliente como del servidor. La consulta de puertos no mostró servicios escuchando en 8089 ni 8090. Al repetir el ejercicio, si aparecen contenedores previos llamados `nginx1` o `nginx2`, revisarlos antes de continuar; no eliminarlos automáticamente. Comprobar los puertos con:
 
 ```bash
 ss -ltn '( sport = :8089 or sport = :8090 )'
@@ -265,10 +250,10 @@ Se guardaron los siguientes archivos en `evidencias/`:
 | [Cabeceras de nginx1](evidencias/cabeceras-nginx1.txt) y [cabeceras de nginx2](evidencias/cabeceras-nginx2.txt) | Respuestas HTTP 200 y datos del servidor |
 | [Respuesta de nginx1](evidencias/respuesta-nginx1.html) y [respuesta de nginx2](evidencias/respuesta-nginx2.html) | Cuerpos HTML recuperados por HTTP |
 | [Original de nginx1](evidencias/index1-original.html) y [original de nginx2](evidencias/index2-original.html) | Copias de las páginas predeterminadas antes de personalizarlas |
-| [Captura institucional](evidencias/04-institucional.png) y [captura personal](evidencias/05-personal.png) | Páginas reales abiertas en el navegador; se muestran en la sección 9 |
-| [Registro de capturas](evidencias/capturas-navegador.txt) | Direcciones consultadas y fecha de obtención de las capturas |
+| [Captura institucional](evidencias/04-institucional.png) y [captura personal](evidencias/05-personal.png) | Páginas reales abiertas en el navegador; se muestran en la sección 8 |
+| [Registro de capturas](evidencias/capturas-navegador.txt) | Direcciones consultadas para obtener las capturas |
 
-Las capturas muestran las páginas abiertas en `http://localhost:8089/` y `http://localhost:8090/`. Se guardaron a las 21:10:01 del 19 de octubre de 2026, después de las pruebas de terminal. Las direcciones y la hora constan en el registro de capturas.
+Las capturas muestran las páginas abiertas en `http://localhost:8089/` y `http://localhost:8090/`. Las direcciones consultadas constan en el registro de capturas.
 
 ### Paso 10. Corregir el error de edición
 
@@ -278,13 +263,13 @@ Las copias locales se conservaron para poder repetir el ejercicio. Si se elimina
 
 ### Paso 11. Publicar el informe y preparar la entrega
 
-El informe reúne los datos del estudiante, el intervalo técnico registrado, las páginas y las evidencias. Los materiales se organizan en el repositorio independiente `practica-1-nginx-docker`, con `informe.md`, `README.md`, `index1.html` e `index2.html` en la raíz y las carpetas `images/`, `evidencias/` y `audio/` para los recursos correspondientes.
+El informe reúne los datos del estudiante, las páginas y las evidencias. Los materiales se organizan en el repositorio independiente `practica-1-nginx-docker`, con `informe.md`, `README.md`, `index1.html` e `index2.html` en la raíz y las carpetas `images/`, `evidencias/` y `audio/` para los recursos correspondientes.
 
 **Enlace de entrega:** [Informe de la Práctica 1 en GitHub](https://github.com/pozosaurio-stack/practica-1-nginx-docker/blob/main/informe.md).
 
 Grabar con la voz del estudiante una reflexión de 60 segundos, utilizando [el guion de apoyo](audio/guion-audio.md) solo después de ajustarlo a lo aprendido. Guardarla como MP3 y comprobar su duración. El guion no reemplaza el archivo de audio.
 
-## 9. Resultados esperados:
+## 8. Resultados esperados:
 
 | Aspecto | Resultado esperado | Resultado observado |
 | --- | --- | --- |
@@ -306,7 +291,7 @@ Grabar con la voz del estudiante una reflexión de 60 segundos, utilizando [el g
 
 **Conclusión:** los dos servidores funcionaron con la misma imagen de Nginx y mostraron contenidos distintos. El puerto 8089 presentó la información del instituto y el 8090, los datos de Pedro Pozo. La práctica permitió comprobar cómo se copia y modifica una página dentro de un contenedor. El error de edición también mostró la importancia de revisar el archivo antes de devolverlo al servidor. Las dos respuestas HTTP fueron 200 y coincidieron con los HTML guardados en la computadora.
 
-## 10. Bibliografía
+## 9. Bibliografía
 
 - Docker. (s. f.-a). *[docker container cp](https://docs.docker.com/reference/cli/docker/container/cp/)*. Docker Docs. Recuperado el 19 de octubre de 2026.
 - Docker. (s. f.-b). *[Publishing and exposing ports](https://docs.docker.com/get-started/docker-concepts/running-containers/publishing-ports/)*. Docker Docs. Recuperado el 19 de octubre de 2026.
